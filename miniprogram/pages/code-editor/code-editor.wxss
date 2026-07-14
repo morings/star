@@ -1,0 +1,118 @@
+/* pages/code-editor/code-editor.wxss */
+.full-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background: #1E1E1E;
+}
+
+/* 顶栏 */
+.top-bar {
+  background: #252526;
+  border-bottom: 1rpx solid #3E3E3E;
+  flex-shrink: 0;
+}
+
+.top-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 32rpx;
+}
+
+.lang-label {
+  font-size: 26rpx;
+  color: #569CD6;
+  background: rgba(86, 156, 214, 0.15);
+  padding: 6rpx 20rpx;
+  border-radius: 6rpx;
+}
+
+.close-btn {
+  font-size: 26rpx;
+  color: #CCC;
+  padding: 8rpx 16rpx;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6rpx;
+}
+
+.back-btn {
+  flex: 1;
+  background: #3E3E3E;
+  color: #CCC;
+  margin-right: 16rpx;
+}
+
+/* 查看模式 - 代码展示 */
+.code-viewer {
+  flex: 1;
+  padding: 32rpx;
+  overflow: auto;
+}
+
+.code-text {
+  font-size: 28rpx;
+  font-family: 'Courier New', Consolas, 'Source Code Pro', monospace;
+  color: #D4D4D4;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 编辑模式 - 代码编辑器 */
+.code-editor {
+  flex: 1;
+  width: 100%;
+  padding: 32rpx;
+  font-size: 28rpx;
+  font-family: 'Courier New', Consolas, 'Source Code Pro', monospace;
+  color: #D4D4D4;
+  background: #1E1E1E;
+  line-height: 1.8;
+  box-sizing: border-box;
+}
+
+/* 底栏 */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 32rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #252526;
+  border-top: 1rpx solid #3E3E3E;
+  flex-shrink: 0;
+}
+
+.bar-btn {
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  border: none;
+  padding: 0 32rpx;
+}
+
+.bar-btn::after {
+  border: none;
+}
+
+.copy-btn {
+  flex: 1;
+  background: #4A90D9;
+  color: #fff;
+}
+
+.cancel-btn {
+  flex: 1;
+  background: #3E3E3E;
+  color: #CCC;
+  margin-right: 16rpx;
+}
+
+.save-btn {
+  flex: 1;
+  background: #4A90D9;
+  color: #fff;
+}

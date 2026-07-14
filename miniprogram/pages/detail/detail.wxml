@@ -17,16 +17,30 @@
           <text class="time-text" wx:if="{{record.fmtCompletedTime}}">完成于 {{record.fmtCompletedTime}}</text>
         </view>
       </view>
-      <view class="section" wx:if="{{record.tags && record.tags.length > 0}}">
-        <view class="label">标签</view>
-        <view class="tags-row">
-          <text class="tag-badge" wx:for="{{record.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
-        </view>
-      </view>
       <view class="section">
         <view class="label">描述</view>
         <view class="desc">{{record.desc || '暂无描述'}}</view>
       </view>
+
+      <!-- 代码块（查看模式） -->
+      <view class="section" wx:if="{{record.codeBlocks && record.codeBlocks.length > 0}}">
+        <view class="label">代码块</view>
+        <view class="code-display-item" wx:for="{{record.codeBlocks}}" wx:key="index" bindtap="onViewFullscreenCode" data-index="{{index}}">
+          <view class="code-display-header">
+            <text class="code-lang-tag">{{item.language || 'Code'}}</text>
+            <text class="code-fullscreen-hint">⛶ 全屏查看</text>
+          </view>
+          <view class="code-display-content">{{item.content}}</view>
+        </view>
+      </view>
+
+      <view class="section" wx:if="{{record.tags && record.tags.length > 0}}">
+        <view class="label">标签</view>
+        <view class="tags-row">
+          <text class="tag-badge" wx:for="{{record.tags}}" wx:key="_id" wx:for-item="t">{{t.name || t}}</text>
+        </view>
+      </view>
+
       <view class="section">
         <view class="label">创建时间</view>
         <text class="time-text">{{record.fmtCreateTime}}</text>
@@ -51,6 +65,42 @@
         <view class="label">描述</view>
         <textarea class="edit-textarea" value="{{editForm.desc}}" bindinput="onEditDesc" auto-height maxlength="200" />
       </view>
+
+      <!-- 代码块（编辑模式） -->
+      <view class="section">
+        <view class="label">代码块</view>
+        <block wx:for="{{editCodeBlocks}}" wx:key="index">
+          <view class="code-block-item">
+            <view class="code-block-header">
+              <scroll-view class="lang-select" scroll-x enhanced show-scrollbar="{{false}}">
+                <view
+                  class="lang-option {{item.language === lang ? 'active' : ''}}"
+                  wx:for="{{languages}}"
+                  wx:key="*this"
+                  wx:for-item="lang"
+                  wx:for-index="langIdx"
+                  bindtap="onEditCodeLangChange"
+                  data-index="{{index}}"
+                  data-lang="{{lang}}"
+                >{{lang}}</view>
+              </scroll-view>
+              <text class="code-fullscreen-btn" bindtap="onEditFullscreenCode" data-index="{{index}}">⛶ 全屏</text>
+              <text class="code-remove-btn" bindtap="onEditRemoveCodeBlock" data-index="{{index}}">✕ 删除</text>
+            </view>
+            <textarea
+              class="code-textarea"
+              placeholder="在此粘贴代码..."
+              value="{{item.content}}"
+              bindinput="onEditCodeContentInput"
+              data-index="{{index}}"
+              auto-height
+              maxlength="-1"
+            />
+          </view>
+        </block>
+        <view class="code-add-btn" bindtap="onEditAddCodeBlock">+ 添加代码块</view>
+      </view>
+
       <view class="section">
         <view class="label">标签</view>
         <view class="tag-select">
@@ -59,7 +109,7 @@
             wx:for="{{allTags}}"
             wx:key="_id"
             bindtap="onToggleTag"
-            data-name="{{item.name}}"
+            data-id="{{item._id}}"
           >{{item.name}}</view>
         </view>
       </view>

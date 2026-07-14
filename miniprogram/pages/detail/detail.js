@@ -1,11 +1,15 @@
 // pages/detail/detail.js
+const LANGUAGES = ['JavaScript', 'TypeScript', 'Python', 'SQL', 'HTML', 'Vue', 'CSS', 'Shell', 'Java', 'Go', 'C++', 'Other'];
+
 Page({
   data: {
     record: {},
     loading: true,
     isEditing: false,
     editForm: { title: '', desc: '' },
-    allTags: []  // 所有标签（含 selected 状态）
+    allTags: [],   // 所有标签（含 selected 状态）
+    editCodeBlocks: [],   // 编辑模式下的代码块
+    languages: LANGUAGES
   },
 
   onLoad(options) {
@@ -59,23 +63,28 @@ Page({
 
   // ========== 编辑相关 ==========
   onStartEdit() {
-    const { title, desc, tags } = this.data.record;
+    const { title, desc, tags, codeBlocks } = this.data.record;
+    // tags 现在是 [{_id, name}, ...] 对象数组
+    const tagIds = (tags || []).map(t => t._id || t);
     this.setData({
       isEditing: true,
-      editForm: { title: title || '', desc: desc || '' }
+      editForm: { title: title || '', desc: desc || '' },
+      editCodeBlocks: (codeBlocks && codeBlocks.length > 0)
+        ? codeBlocks.map(b => ({ language: b.language || 'JavaScript', content: b.content || '' }))
+        : []
     });
-    this.loadAllTags(tags || []);
+    this.loadAllTags(tagIds);
   },
 
-  loadAllTags(selectedTagNames) {
+  loadAllTags(selectedTagIds) {
     wx.cloud.callFunction({
       name: 'todo_getTags'
     }).then(res => {
       if (res.result && res.result.code === 0) {
-        const tagSet = new Set(selectedTagNames);
+        const tagSet = new Set(selectedTagIds);
         const allTags = (res.result.data || []).map(t => ({
           ...t,
-          selected: tagSet.has(t.name)
+          selected: tagSet.has(t._id)
         }));
         this.setData({ allTags });
       }
@@ -91,9 +100,9 @@ Page({
   },
 
   onToggleTag(e) {
-    const name = e.currentTarget.dataset.name;
+    const id = e.currentTarget.dataset.id;
     const allTags = this.data.allTags.map(t => {
-      if (t.name === name) return { ...t, selected: !t.selected };
+      if (t._id === id) return { ...t, selected: !t.selected };
       return t;
     });
     this.setData({ allTags });
@@ -104,16 +113,18 @@ Page({
   },
 
   onSaveEdit() {
-    const { editForm, allTags } = this.data;
+    const { editForm, allTags, editCodeBlocks } = this.data;
     const title = editForm.title.trim();
     if (!title) {
       wx.showToast({ title: '标题不能为空', icon: 'none' });
       return;
     }
-    const tags = allTags.filter(t => t.selected).map(t => t.name);
+    const tagIds = allTags.filter(t => t.selected).map(t => t._id);
+    // 过滤空内容代码块
+    const validBlocks = editCodeBlocks.filter(b => b.content.trim());
     wx.cloud.callFunction({
       name: 'todo_updateRecord',
-      data: { id: this.recordId, title, desc: editForm.desc.trim(), tags }
+      data: { id: this.recordId, title, desc: editForm.desc.trim(), tagIds, codeBlocks: validBlocks }
     }).then(res => {
       if (res.result && res.result.code === 0) {
         wx.showToast({ title: '保存成功', icon: 'success' });
@@ -121,6 +132,86 @@ Page({
         this.loadRecord();
       } else {
         wx.showToast({ title: (res.result && res.result.msg) || '保存失败', icon: 'none' });
+      }
+    });
+  },
+
+  // ========== 编辑-代码块 ==========
+  onEditAddCodeBlock() {
+    const blocks = [...this.data.editCodeBlocks, { language: 'JavaScript', content: '' }];
+    this.setData({ editCodeBlocks: blocks });
+  },
+
+  onEditRemoveCodeBlock(e) {
+    const idx = e.currentTarget.dataset.index;
+    const block = this.data.editCodeBlocks[idx];
+    if (block && block.content.trim()) {
+      wx.showModal({
+        title: '确认删除',
+        content: '确定要删除这个代码块吗？',
+        success: (res) => {
+          if (res.confirm) {
+            const blocks = [...this.data.editCodeBlocks];
+            blocks.splice(idx, 1);
+            this.setData({ editCodeBlocks: blocks });
+          }
+        }
+      });
+    } else {
+      const blocks = [...this.data.editCodeBlocks];
+      blocks.splice(idx, 1);
+      this.setData({ editCodeBlocks: blocks });
+    }
+  },
+
+  onEditCodeLangChange(e) {
+    const { index, lang } = e.currentTarget.dataset;
+    this.setData({ [`editCodeBlocks[${index}].language`]: lang });
+  },
+
+  onEditCodeContentInput(e) {
+    const idx = e.currentTarget.dataset.index;
+    this.setData({ [`editCodeBlocks[${idx}].content`]: e.detail.value });
+  },
+
+  // 全屏查看（查看模式）
+  onViewFullscreenCode(e) {
+    const idx = e.currentTarget.dataset.index;
+    const block = this.data.record.codeBlocks[idx];
+    wx.navigateTo({
+      url: '/pages/code-editor/code-editor',
+      success: (res) => {
+        res.eventChannel.emit('init', {
+          index: idx,
+          content: block.content,
+          language: block.language,
+          readonly: true
+        });
+      }
+    });
+  },
+
+  // 全屏编辑（编辑模式）
+  onEditFullscreenCode(e) {
+    const idx = e.currentTarget.dataset.index;
+    const block = this.data.editCodeBlocks[idx];
+    wx.navigateTo({
+      url: '/pages/code-editor/code-editor',
+      events: {
+        onSave: (data) => {
+          this.setData({
+            [`editCodeBlocks[${data.index}].content`]: data.content,
+            [`editCodeBlocks[${data.index}].language`]: data.language
+          });
+        }
+      },
+      success: (res) => {
+        res.eventChannel.emit('init', {
+          index: idx,
+          content: block.content,
+          language: block.language,
+          readonly: false
+        });
       }
     });
   },

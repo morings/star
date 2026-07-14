@@ -1,10 +1,14 @@
 // pages/add/add.js
+const LANGUAGES = ['JavaScript', 'TypeScript', 'Python', 'SQL', 'HTML', 'Vue', 'CSS', 'Shell', 'Java', 'Go', 'C++', 'Other'];
+
 Page({
   data: {
     title: '',
     desc: '',
     tags: [],
-    selectedTags: []
+    selectedTagIds: [],
+    codeBlocks: [],   // [{ language: 'JavaScript', content: '' }]
+    languages: LANGUAGES
   },
 
   onShow() {
@@ -25,11 +29,11 @@ Page({
     });
   },
 
-  // 将 selectedTags 状态合并到 tags 数组中，方便 WXML 直接读取
+  // 将 selectedTagIds 状态合并到 tags 数组中，方便 WXML 直接读取
   refreshTagSelected() {
-    const { tags, selectedTags } = this.data;
-    const tagSet = new Set(selectedTags);
-    const merged = tags.map(t => ({ ...t, selected: tagSet.has(t.name) }));
+    const { tags, selectedTagIds } = this.data;
+    const tagSet = new Set(selectedTagIds);
+    const merged = tags.map(t => ({ ...t, selected: tagSet.has(t._id) }));
     this.setData({ tags: merged });
   },
 
@@ -43,15 +47,15 @@ Page({
 
   // 切换标签选中状态
   onToggleTag(e) {
-    const name = e.currentTarget.dataset.name;
-    const selectedTags = [...this.data.selectedTags];
-    const idx = selectedTags.indexOf(name);
+    const id = e.currentTarget.dataset.id;
+    const selectedTagIds = [...this.data.selectedTagIds];
+    const idx = selectedTagIds.indexOf(id);
     if (idx > -1) {
-      selectedTags.splice(idx, 1);
+      selectedTagIds.splice(idx, 1);
     } else {
-      selectedTags.push(name);
+      selectedTagIds.push(id);
     }
-    this.setData({ selectedTags }, () => {
+    this.setData({ selectedTagIds }, () => {
       this.refreshTagSelected();
     });
   },
@@ -81,28 +85,94 @@ Page({
     });
   },
 
+  // ========== 代码块 ==========
+  onAddCodeBlock() {
+    const codeBlocks = [...this.data.codeBlocks, { language: 'JavaScript', content: '' }];
+    this.setData({ codeBlocks });
+  },
+
+  onRemoveCodeBlock(e) {
+    const idx = e.currentTarget.dataset.index;
+    const block = this.data.codeBlocks[idx];
+    if (block && block.content.trim()) {
+      wx.showModal({
+        title: '确认删除',
+        content: '确定要删除这个代码块吗？',
+        success: (res) => {
+          if (res.confirm) {
+            const codeBlocks = [...this.data.codeBlocks];
+            codeBlocks.splice(idx, 1);
+            this.setData({ codeBlocks });
+          }
+        }
+      });
+    } else {
+      const codeBlocks = [...this.data.codeBlocks];
+      codeBlocks.splice(idx, 1);
+      this.setData({ codeBlocks });
+    }
+  },
+
+  onCodeLangChange(e) {
+    const { index, lang } = e.currentTarget.dataset;
+    this.setData({ [`codeBlocks[${index}].language`]: lang });
+  },
+
+  onCodeContentInput(e) {
+    const idx = e.currentTarget.dataset.index;
+    this.setData({ [`codeBlocks[${idx}].content`]: e.detail.value });
+  },
+
+  // 全屏编辑代码块
+  onFullscreenCodeBlock(e) {
+    const idx = e.currentTarget.dataset.index;
+    const block = this.data.codeBlocks[idx];
+    wx.navigateTo({
+      url: '/pages/code-editor/code-editor',
+      events: {
+        onSave: (data) => {
+          this.setData({
+            [`codeBlocks[${data.index}].content`]: data.content,
+            [`codeBlocks[${data.index}].language`]: data.language
+          });
+        }
+      },
+      success: (res) => {
+        res.eventChannel.emit('init', {
+          index: idx,
+          content: block.content,
+          language: block.language,
+          readonly: false
+        });
+      }
+    });
+  },
+
   // 提交记录
   onSubmit() {
-    const { title, desc, selectedTags } = this.data;
+    const { title, desc, selectedTagIds, codeBlocks } = this.data;
     if (!title.trim()) {
       wx.showToast({ title: '请输入标题', icon: 'none' });
       return;
     }
-    if (selectedTags.length === 0) {
+    if (selectedTagIds.length === 0) {
       wx.showToast({ title: '请至少选择一个标签', icon: 'none' });
       return;
     }
+    // 过滤掉内容为空的代码块
+    const validBlocks = codeBlocks.filter(b => b.content.trim());
     wx.cloud.callFunction({
       name: 'todo_addRecord',
       data: {
         title: title.trim(),
-        tags: selectedTags,
-        desc: desc.trim()
+        tagIds: selectedTagIds,
+        desc: desc.trim(),
+        codeBlocks: validBlocks
       }
     }).then(res => {
       if (res.result && res.result.code === 0) {
         wx.showToast({ title: '添加成功', icon: 'success' });
-        this.setData({ title: '', desc: '', selectedTags: [] });
+        this.setData({ title: '', desc: '', selectedTagIds: [], codeBlocks: [] });
         // 跳转到记录列表页
         setTimeout(() => {
           wx.switchTab({ url: '/pages/index/index' });

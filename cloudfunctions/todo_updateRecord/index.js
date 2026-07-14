@@ -3,7 +3,8 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
 exports.main = async (event, context) => {
-  const { id, isCompleted, title, tags, desc } = event;
+  const { id, isCompleted, title, tags, tagIds, desc, codeBlocks } = event;
+  const finalTagIds = tagIds || tags; // 兼容旧的 tags 参数
   if (!id) {
     return { code: -1, msg: '记录ID不能为空' };
   }
@@ -16,8 +17,9 @@ exports.main = async (event, context) => {
       updateData.completedTime = isCompleted ? Date.now() : null;
     }
     if (title !== undefined) updateData.title = title;
-    if (tags !== undefined) updateData.tags = tags;
+    if (finalTagIds !== undefined) updateData.tags = finalTagIds;
     if (desc !== undefined) updateData.desc = desc;
+    if (codeBlocks !== undefined) updateData.codeBlocks = codeBlocks;
 
     await db.collection('records').doc(id).update({
       data: updateData

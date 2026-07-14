@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/add/add",
     "pages/tags/tags",
-    "pages/detail/detail"
+    "pages/detail/detail",
+    "pages/code-editor/code-editor"
   ],
   "window": {
     "backgroundColor": "#F5F7FA",

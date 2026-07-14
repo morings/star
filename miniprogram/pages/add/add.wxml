@@ -13,6 +13,41 @@
       <textarea class="form-textarea" placeholder="请输入描述内容（可选）" value="{{desc}}" bindinput="onDescInput" auto-height maxlength="200" />
     </view>
 
+    <!-- 代码块 -->
+    <view class="form-item">
+      <view class="form-label">代码块</view>
+      <block wx:for="{{codeBlocks}}" wx:key="index">
+        <view class="code-block-item">
+          <view class="code-block-header">
+            <scroll-view class="lang-select" scroll-x enhanced show-scrollbar="{{false}}">
+              <view
+                class="lang-option {{item.language === lang ? 'active' : ''}}"
+                wx:for="{{languages}}"
+                wx:key="*this"
+                wx:for-item="lang"
+                wx:for-index="langIdx"
+                bindtap="onCodeLangChange"
+                data-index="{{index}}"
+                data-lang="{{lang}}"
+              >{{lang}}</view>
+            </scroll-view>
+            <text class="code-fullscreen-btn" bindtap="onFullscreenCodeBlock" data-index="{{index}}">⛶ 全屏</text>
+            <text class="code-remove-btn" bindtap="onRemoveCodeBlock" data-index="{{index}}">✕ 删除</text>
+          </view>
+          <textarea
+            class="code-textarea"
+            placeholder="在此粘贴代码..."
+            value="{{item.content}}"
+            bindinput="onCodeContentInput"
+            data-index="{{index}}"
+            auto-height
+            maxlength="-1"
+          />
+        </view>
+      </block>
+      <view class="code-add-btn" bindtap="onAddCodeBlock">+ 添加代码块</view>
+    </view>
+
     <!-- 标签选择 -->
     <view class="form-item">
       <view class="form-label">标签 <text class="required">*</text></view>
@@ -22,7 +57,7 @@
           wx:for="{{tags}}"
           wx:key="_id"
           bindtap="onToggleTag"
-          data-name="{{item.name}}"
+          data-id="{{item._id}}"
         >{{item.name}}</view>
         <view class="tag-option tag-add-btn" bindtap="onQuickAddTag">+ 新建标签</view>
       </view>

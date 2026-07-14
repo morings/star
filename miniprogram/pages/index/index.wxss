@@ -214,6 +214,25 @@
   -webkit-box-orient: vertical;
 }
 
+.card-code-hint {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.code-hint-icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+}
+
+.code-hint-text {
+  font-size: 22rpx;
+  color: #4A90D9;
+  background: #EBF3FD;
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+}
+
 .card-footer {
   display: flex;
   align-items: center;

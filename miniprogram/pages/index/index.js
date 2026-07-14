@@ -35,7 +35,7 @@ Page({
     const { keyword, filterTag, filterStatus, filterCompletedStart, filterCompletedEnd } = this.data;
     const params = {
       keyword: keyword || undefined,
-      tag: filterTag || undefined
+      tagId: filterTag || undefined
     };
     // 状态筛选
     if (filterStatus === 'pending') {
@@ -88,8 +88,8 @@ Page({
 
   // 标签筛选
   onFilterTag(e) {
-    const tag = e.currentTarget.dataset.tag;
-    this.setData({ filterTag: tag }, () => {
+    const tagId = e.currentTarget.dataset.tag;
+    this.setData({ filterTag: tagId }, () => {
       this.loadRecords();
     });
   },

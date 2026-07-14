@@ -3,7 +3,8 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
 exports.main = async (event, context) => {
-  const { title, tags, desc } = event;
+  const { title, tags, tagIds, desc, codeBlocks } = event;
+  const finalTagIds = tagIds || tags || []; // 兼容旧的 tags 参数
   if (!title || !title.trim()) {
     return { code: -1, msg: '标题不能为空' };
   }
@@ -11,8 +12,9 @@ exports.main = async (event, context) => {
     const result = await db.collection('records').add({
       data: {
         title: title.trim(),
-        tags: tags || [],
+        tags: finalTagIds,
         desc: desc || '',
+        codeBlocks: codeBlocks || [],
         isCompleted: false,
         completedTime: null,
         createTime: db.serverDate()

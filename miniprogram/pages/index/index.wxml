@@ -24,11 +24,11 @@
   <scroll-view class="tag-filter" scroll-x enhanced show-scrollbar="{{false}}">
     <view class="tag-filter-item {{filterTag === '' ? 'active' : ''}}" bindtap="onFilterTag" data-tag="">全部</view>
     <view
-      class="tag-filter-item {{filterTag === item.name ? 'active' : ''}}"
+      class="tag-filter-item {{filterTag === item._id ? 'active' : ''}}"
       wx:for="{{tags}}"
       wx:key="_id"
       bindtap="onFilterTag"
-      data-tag="{{item.name}}"
+      data-tag="{{item._id}}"
     >{{item.name}}</view>
   </scroll-view>
 
@@ -70,9 +70,13 @@
           </text>
         </view>
         <view class="card-tags" wx:if="{{item.tags && item.tags.length > 0}}">
-          <text class="tag-badge" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
+          <text class="tag-badge" wx:for="{{item.tags}}" wx:key="_id" wx:for-item="t">{{t.name || t}}</text>
         </view>
         <view class="card-desc" wx:if="{{item.desc}}">{{item.desc}}</view>
+        <view class="card-code-hint" wx:if="{{item.codeBlocks && item.codeBlocks.length > 0}}">
+          <text class="code-hint-icon">📋</text>
+          <text class="code-hint-text">{{item.codeBlocks.length}} 个代码块</text>
+        </view>
         <view class="card-footer">
           <text class="card-time">{{item.fmtCreateTime}}</text>
           <text class="card-arrow">›</text>

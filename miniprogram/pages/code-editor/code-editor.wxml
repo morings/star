@@ -1,0 +1,39 @@
+<!--pages/code-editor/code-editor.wxml-->
+<view class="full-container">
+  <!-- 顶栏 -->
+  <view class="top-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="top-bar-inner">
+      <text class="lang-label">{{language || 'Code'}}</text>
+      <text class="close-btn" bindtap="onClose">✕ 返回</text>
+    </view>
+  </view>
+
+  <!-- 查看模式 -->
+  <scroll-view class="code-viewer" scroll-y enhanced show-scrollbar="{{true}}" wx:if="{{readonly}}">
+    <text class="code-text">{{content}}</text>
+  </scroll-view>
+
+  <!-- 编辑模式 -->
+  <textarea
+    class="code-editor"
+    wx:else
+    value="{{content}}"
+    bindinput="onInput"
+    placeholder="输入代码..."
+    auto-focus
+    adjust-position="{{false}}"
+    maxlength="-1"
+  />
+
+  <!-- 底栏 -->
+  <view class="bottom-bar">
+    <block wx:if="{{readonly}}">
+      <button class="bar-btn back-btn" bindtap="onClose">返回</button>
+      <button class="bar-btn copy-btn" bindtap="onCopy">复制代码</button>
+    </block>
+    <block wx:else>
+      <button class="bar-btn cancel-btn" bindtap="onClose">取消</button>
+      <button class="bar-btn save-btn" bindtap="onSave">保存</button>
+    </block>
+  </view>
+</view>
