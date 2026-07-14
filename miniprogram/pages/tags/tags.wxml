@@ -1,0 +1,30 @@
+<!--pages/tags/tags.wxml-->
+<view class="page">
+  <!-- 添加标签 -->
+  <view class="add-section">
+    <input class="add-input" placeholder="输入新标签名称" value="{{newTagName}}" bindinput="onInputTag" maxlength="20" />
+    <button class="add-btn" bindtap="onAddTag">添加</button>
+  </view>
+
+  <!-- 标签列表 -->
+  <view class="tag-list">
+    <block wx:if="{{tags.length === 0}}">
+      <view class="empty-tip">
+        <view class="empty-icon">🏷️</view>
+        <text>暂无标签，快去添加吧~</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="tag-item" wx:for="{{tags}}" wx:key="_id">
+        <view class="tag-info">
+          <view class="tag-color-dot"></view>
+          <text class="tag-name">{{item.name}}</text>
+        </view>
+        <view class="tag-actions">
+          <text class="action-edit" bindtap="onEditTag" data-id="{{item._id}}" data-name="{{item.name}}">编辑</text>
+          <text class="action-delete" bindtap="onDeleteTag" data-id="{{item._id}}" data-name="{{item.name}}">删除</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

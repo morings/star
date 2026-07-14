@@ -1,0 +1,83 @@
+<!--pages/index/index.wxml-->
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input 
+      class="search-input" 
+      placeholder="搜索标题关键字..." 
+      value="{{keyword}}" 
+      bindinput="onSearchInput" 
+      bindconfirm="onSearchConfirm"
+      confirm-type="search" 
+    />
+    <text class="search-icon" wx:if="{{keyword}}" bindtap="onSearchConfirm">搜索</text>
+  </view>
+
+  <!-- 状态筛选 -->
+  <view class="status-filter">
+    <view class="status-item {{filterStatus === '' ? 'active' : ''}}" bindtap="onFilterStatus" data-status="">全部</view>
+    <view class="status-item {{filterStatus === 'pending' ? 'active' : ''}}" bindtap="onFilterStatus" data-status="pending">待完成</view>
+    <view class="status-item {{filterStatus === 'done' ? 'active' : ''}}" bindtap="onFilterStatus" data-status="done">已完成</view>
+  </view>
+
+  <!-- 标签筛选 -->
+  <scroll-view class="tag-filter" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="tag-filter-item {{filterTag === '' ? 'active' : ''}}" bindtap="onFilterTag" data-tag="">全部</view>
+    <view
+      class="tag-filter-item {{filterTag === item.name ? 'active' : ''}}"
+      wx:for="{{tags}}"
+      wx:key="_id"
+      bindtap="onFilterTag"
+      data-tag="{{item.name}}"
+    >{{item.name}}</view>
+  </scroll-view>
+
+  <!-- 完成时间筛选（仅「已完成」状态时显示） -->
+  <view class="time-filter" wx:if="{{filterStatus === 'done'}}">
+    <picker mode="date" value="{{filterCompletedStart}}" bindchange="onCompletedStartChange">
+      <view class="time-picker">
+        <text class="time-label">起始：</text>
+        <text class="time-val">{{filterCompletedStart || '不限'}}</text>
+      </view>
+    </picker>
+    <picker mode="date" value="{{filterCompletedEnd}}" bindchange="onCompletedEndChange">
+      <view class="time-picker">
+        <text class="time-label">截止：</text>
+        <text class="time-val">{{filterCompletedEnd || '不限'}}</text>
+      </view>
+    </picker>
+    <text class="time-confirm" bindtap="onTimeFilterConfirm">查询</text>
+    <text class="time-clear" bindtap="onTimeFilterClear">清空</text>
+  </view>
+
+  <!-- 记录列表 -->
+  <scroll-view class="record-list" scroll-y enhanced show-scrollbar="{{false}}">
+    <block wx:if="{{loading}}">
+      <view class="loading-tip">加载中...</view>
+    </block>
+    <block wx:elif="{{records.length === 0}}">
+      <view class="empty-tip">
+        <view class="empty-icon">📋</view>
+        <text>还没有记录，快去添加一条吧~</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="record-card {{item.isCompleted ? 'done' : ''}}" wx:for="{{records}}" wx:key="_id" bindtap="onViewDetail" data-id="{{item._id}}">
+        <view class="card-header">
+          <text class="card-title">{{item.title}}</text>
+          <text class="card-status {{item.isCompleted ? 's-done' : 's-pending'}}">
+            {{item.isCompleted ? '已完成' : '待完成'}}
+          </text>
+        </view>
+        <view class="card-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+          <text class="tag-badge" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
+        </view>
+        <view class="card-desc" wx:if="{{item.desc}}">{{item.desc}}</view>
+        <view class="card-footer">
+          <text class="card-time">{{item.fmtCreateTime}}</text>
+          <text class="card-arrow">›</text>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+</view>

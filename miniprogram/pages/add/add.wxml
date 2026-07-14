@@ -1,0 +1,34 @@
+<!--pages/add/add.wxml-->
+<view class="page">
+  <view class="form">
+    <!-- 标题 -->
+    <view class="form-item">
+      <view class="form-label">标题 <text class="required">*</text></view>
+      <input class="form-input" placeholder="请输入记录标题" value="{{title}}" bindinput="onTitleInput" maxlength="50" />
+    </view>
+
+    <!-- 描述 -->
+    <view class="form-item">
+      <view class="form-label">描述</view>
+      <textarea class="form-textarea" placeholder="请输入描述内容（可选）" value="{{desc}}" bindinput="onDescInput" auto-height maxlength="200" />
+    </view>
+
+    <!-- 标签选择 -->
+    <view class="form-item">
+      <view class="form-label">标签 <text class="required">*</text></view>
+      <view class="tag-select">
+        <view
+          class="tag-option {{item.selected ? 'selected' : ''}}"
+          wx:for="{{tags}}"
+          wx:key="_id"
+          bindtap="onToggleTag"
+          data-name="{{item.name}}"
+        >{{item.name}}</view>
+        <view class="tag-option tag-add-btn" bindtap="onQuickAddTag">+ 新建标签</view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <button class="submit-btn" bindtap="onSubmit" hover-class="submit-btn-hover">提 交 记 录</button>
+  </view>
+</view>

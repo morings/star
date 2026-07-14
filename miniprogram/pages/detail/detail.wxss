@@ -1,0 +1,208 @@
+/* pages/detail/detail.wxss */
+.page {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.section {
+  margin-bottom: 36rpx;
+}
+
+.label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+}
+
+.required {
+  color: #E53935;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.4;
+}
+
+.title.done {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+}
+
+.status-tag {
+  font-size: 24rpx;
+  padding: 6rpx 20rpx;
+  border-radius: 8rpx;
+}
+
+.status-tag.pending {
+  color: #F5A623;
+  background: #FFF8E1;
+}
+
+.status-tag.done {
+  color: #4CAF50;
+  background: #E8F5E9;
+}
+
+.time-text {
+  font-size: 24rpx;
+  color: #B0B0B0;
+  margin-left: 20rpx;
+}
+
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-badge {
+  display: inline-block;
+  padding: 8rpx 24rpx;
+  margin-right: 16rpx;
+  margin-bottom: 8rpx;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  color: #4A90D9;
+  background: #EBF3FD;
+}
+
+.desc {
+  font-size: 30rpx;
+  color: #555;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ========== 编辑表单 ========== */
+.edit-input {
+  height: 88rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  color: #333;
+  background: #F5F7FA;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+}
+
+.edit-input:focus {
+  border-color: #4A90D9;
+  background: #fff;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  background: #F5F7FA;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  box-sizing: border-box;
+}
+
+.edit-textarea:focus {
+  border-color: #4A90D9;
+  background: #fff;
+}
+
+/* 标签选择（编辑模式） */
+.tag-select {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-option {
+  padding: 12rpx 28rpx;
+  margin-right: 16rpx;
+  margin-bottom: 12rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: #666;
+  background: #F0F2F5;
+  border: 2rpx solid transparent;
+}
+
+.tag-option.selected {
+  color: #fff;
+  background: #4A90D9;
+}
+
+/* ========== 操作按钮 ========== */
+.actions {
+  margin-top: 48rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 30rpx;
+  border-radius: 16rpx;
+  border: none;
+  margin-bottom: 20rpx;
+}
+
+.action-btn:last-child {
+  margin-bottom: 0;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.edit-btn {
+  background: #4A90D9;
+  color: #fff;
+}
+
+.complete-btn {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.complete-btn.undo {
+  background: #FF9800;
+}
+
+.delete-btn {
+  background: #fff;
+  color: #E53935;
+  border: 2rpx solid #E53935 !important;
+}
+
+.save-btn {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.cancel-btn {
+  background: #F0F2F5;
+  color: #666;
+}
+
+.loading-tip {
+  text-align: center;
+  padding: 120rpx 0;
+  color: #B0B0B0;
+  font-size: 28rpx;
+}

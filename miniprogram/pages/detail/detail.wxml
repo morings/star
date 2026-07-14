@@ -1,0 +1,76 @@
+<!--pages/detail/detail.wxml-->
+<view class="page">
+  <view class="card" wx:if="{{!loading}}">
+
+    <!-- ========== 查看模式 ========== -->
+    <block wx:if="{{!isEditing}}">
+      <view class="section">
+        <view class="label">标题</view>
+        <view class="title {{record.isCompleted ? 'done' : ''}}">{{record.title}}</view>
+      </view>
+      <view class="section">
+        <view class="label">状态</view>
+        <view class="status-row">
+          <text class="status-tag {{record.isCompleted ? 'done' : 'pending'}}">
+            {{record.isCompleted ? '已完成' : '待完成'}}
+          </text>
+          <text class="time-text" wx:if="{{record.fmtCompletedTime}}">完成于 {{record.fmtCompletedTime}}</text>
+        </view>
+      </view>
+      <view class="section" wx:if="{{record.tags && record.tags.length > 0}}">
+        <view class="label">标签</view>
+        <view class="tags-row">
+          <text class="tag-badge" wx:for="{{record.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
+        </view>
+      </view>
+      <view class="section">
+        <view class="label">描述</view>
+        <view class="desc">{{record.desc || '暂无描述'}}</view>
+      </view>
+      <view class="section">
+        <view class="label">创建时间</view>
+        <text class="time-text">{{record.fmtCreateTime}}</text>
+      </view>
+
+      <view class="actions">
+        <button class="action-btn edit-btn" bindtap="onStartEdit">✎ 编辑记录</button>
+        <button class="action-btn complete-btn {{record.isCompleted ? 'undo' : ''}}" bindtap="onToggleComplete">
+          {{record.isCompleted ? '↩ 撤销完成' : '✓ 标记完成'}}
+        </button>
+        <button class="action-btn delete-btn" bindtap="onDelete">删除记录</button>
+      </view>
+    </block>
+
+    <!-- ========== 编辑模式 ========== -->
+    <block wx:else>
+      <view class="section">
+        <view class="label">标题 <text class="required">*</text></view>
+        <input class="edit-input" value="{{editForm.title}}" bindinput="onEditTitle" maxlength="50" />
+      </view>
+      <view class="section">
+        <view class="label">描述</view>
+        <textarea class="edit-textarea" value="{{editForm.desc}}" bindinput="onEditDesc" auto-height maxlength="200" />
+      </view>
+      <view class="section">
+        <view class="label">标签</view>
+        <view class="tag-select">
+          <view
+            class="tag-option {{item.selected ? 'selected' : ''}}"
+            wx:for="{{allTags}}"
+            wx:key="_id"
+            bindtap="onToggleTag"
+            data-name="{{item.name}}"
+          >{{item.name}}</view>
+        </view>
+      </view>
+
+      <view class="actions">
+        <button class="action-btn save-btn" bindtap="onSaveEdit">✓ 保存修改</button>
+        <button class="action-btn cancel-btn" bindtap="onCancelEdit">取消</button>
+      </view>
+    </block>
+
+  </view>
+
+  <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+</view>
