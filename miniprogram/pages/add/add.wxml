@@ -10,7 +10,7 @@
     <!-- 描述 -->
     <view class="form-item">
       <view class="form-label">描述</view>
-      <textarea class="form-textarea" placeholder="请输入描述内容（可选）" value="{{desc}}" bindinput="onDescInput" auto-height maxlength="200" />
+      <textarea class="form-textarea" placeholder="请输入描述内容（可选）" value="{{desc}}" bindinput="onDescInput" auto-height maxlength="-1" />
     </view>
 
     <!-- 代码块 -->
