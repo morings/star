@@ -1,5 +1,6 @@
 // pages/detail/detail.js
 const LANGUAGES = ['JavaScript', 'TypeScript', 'Python', 'SQL', 'HTML', 'Vue', 'CSS', 'Shell', 'Java', 'Go', 'C++', 'Other'];
+const { mdToHtml } = require('../../utils/md.js');
 
 Page({
   data: {
@@ -7,9 +8,11 @@ Page({
     loading: true,
     isEditing: false,
     editForm: { title: '', desc: '' },
-    allTags: [],   // 所有标签（含 selected 状态）
-    editCodeBlocks: [],   // 编辑模式下的代码块
-    languages: LANGUAGES
+    descFormat: 'plain',     // 'plain' | 'markdown'
+    descPreviewing: false,   // markdown 模式下是否正在预览
+    editCodeBlocks: [],
+    languages: LANGUAGES,
+    descHtml: ''             // markdown 渲染后的 HTML
   },
 
   onLoad(options) {
@@ -40,7 +43,9 @@ Page({
         if (record) {
           record.fmtCreateTime = this.formatTime(record.createTime);
           record.fmtCompletedTime = this.formatTime(record.completedTime);
-          this.setData({ record, loading: false });
+          const fmt = record.descFormat || 'plain';
+          const descHtml = fmt === 'markdown' ? mdToHtml(record.desc || '') : '';
+          this.setData({ record, loading: false, descFormat: fmt, descHtml });
         } else {
           wx.showToast({ title: '记录不存在', icon: 'none' });
           wx.navigateBack();
@@ -63,12 +68,12 @@ Page({
 
   // ========== 编辑相关 ==========
   onStartEdit() {
-    const { title, desc, tags, codeBlocks } = this.data.record;
-    // tags 现在是 [{_id, name}, ...] 对象数组
+    const { title, desc, descFormat, tags, codeBlocks } = this.data.record;
     const tagIds = (tags || []).map(t => t._id || t);
     this.setData({
       isEditing: true,
       editForm: { title: title || '', desc: desc || '' },
+      descFormat: descFormat || 'plain',
       editCodeBlocks: (codeBlocks && codeBlocks.length > 0)
         ? codeBlocks.map(b => ({ language: b.language || 'JavaScript', content: b.content || '' }))
         : []
@@ -97,6 +102,24 @@ Page({
 
   onEditDesc(e) {
     this.setData({ 'editForm.desc': e.detail.value });
+    // 如果正在预览，数据变了但是预览不会更新直到重新点击预览
+  },
+
+  // 切换描述格式：纯文本 / Markdown
+  onToggleDescFormat() {
+    const fmt = this.data.descFormat === 'markdown' ? 'plain' : 'markdown';
+    this.setData({ descFormat: fmt, descPreviewing: false, descHtml: '' });
+  },
+
+  // 切换 Markdown 编辑/预览
+  onToggleDescPreview() {
+    const previewing = !this.data.descPreviewing;
+    if (previewing) {
+      const html = mdToHtml(this.data.editForm.desc || '');
+      this.setData({ descPreviewing: true, descHtml: html });
+    } else {
+      this.setData({ descPreviewing: false });
+    }
   },
 
   onToggleTag(e) {
@@ -113,7 +136,7 @@ Page({
   },
 
   onSaveEdit() {
-    const { editForm, allTags, editCodeBlocks } = this.data;
+    const { editForm, allTags, editCodeBlocks, descFormat } = this.data;
     const title = editForm.title.trim();
     if (!title) {
       wx.showToast({ title: '标题不能为空', icon: 'none' });
@@ -124,7 +147,7 @@ Page({
     const validBlocks = editCodeBlocks.filter(b => b.content.trim());
     wx.cloud.callFunction({
       name: 'todo_updateRecord',
-      data: { id: this.recordId, title, desc: editForm.desc.trim(), tagIds, codeBlocks: validBlocks }
+      data: { id: this.recordId, title, desc: editForm.desc.trim(), descFormat, tagIds, codeBlocks: validBlocks }
     }).then(res => {
       if (res.result && res.result.code === 0) {
         wx.showToast({ title: '保存成功', icon: 'success' });

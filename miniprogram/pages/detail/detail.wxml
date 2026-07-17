@@ -19,7 +19,8 @@
       </view>
       <view class="section">
         <view class="label">描述</view>
-        <view class="desc">{{record.desc || '暂无描述'}}</view>
+        <rich-text wx:if="{{descFormat === 'markdown' && record.desc}}" nodes="{{descHtml}}" class="desc-md"></rich-text>
+        <view class="desc" wx:else>{{record.desc || '暂无描述'}}</view>
       </view>
 
       <!-- 代码块（查看模式） -->
@@ -62,8 +63,39 @@
         <input class="edit-input" value="{{editForm.title}}" bindinput="onEditTitle" maxlength="50" />
       </view>
       <view class="section">
-        <view class="label">描述</view>
-        <textarea class="edit-textarea" value="{{editForm.desc}}" bindinput="onEditDesc" auto-height maxlength="-1" />
+        <view class="label">
+          <text>描述</text>
+          <view class="desc-format-toggle" bindtap="onToggleDescFormat">
+            <text class="fmt-opt {{descFormat === 'plain' ? 'active' : ''}}">纯文本</text>
+            <text class="fmt-opt {{descFormat === 'markdown' ? 'active' : ''}}">Markdown</text>
+          </view>
+        </view>
+
+        <!-- 编辑态 -->
+        <block wx:if="{{descFormat === 'plain' || !descPreviewing}}">
+          <textarea
+            class="edit-textarea {{descFormat === 'markdown' ? 'md-textarea' : ''}}"
+            value="{{editForm.desc}}"
+            bindinput="onEditDesc"
+            placeholder="{{descFormat === 'markdown' ? '支持 # 标题、**粗体**、*斜体*、`代码`、列表、引用...' : '请输入描述内容（可选）'}}"
+            auto-height maxlength="-1"
+          />
+        </block>
+
+        <!-- Markdown 预览态 -->
+        <block wx:if="{{descFormat === 'markdown' && descPreviewing}}">
+          <view class="md-preview-box">
+            <rich-text wx:if="{{descHtml}}" nodes="{{descHtml}}" class="md-preview-content"></rich-text>
+            <text wx:else class="md-preview-empty-tip">（内容为空）</text>
+          </view>
+        </block>
+
+        <!-- 预览 / 编辑切换按钮（仅 markdown 模式） -->
+        <view class="preview-toggle-row" wx:if="{{descFormat === 'markdown'}}">
+          <text class="preview-toggle-btn" bindtap="onToggleDescPreview">
+            {{descPreviewing ? '✎ 返回编辑' : '◉ 预览效果'}}
+          </text>
+        </view>
       </view>
 
       <!-- 代码块（编辑模式） -->

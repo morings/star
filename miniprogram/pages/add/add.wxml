@@ -7,10 +7,41 @@
       <input class="form-input" placeholder="请输入记录标题" value="{{title}}" bindinput="onTitleInput" maxlength="50" />
     </view>
 
-    <!-- 描述 -->
+    <!-- 描述（支持 Markdown 切换） -->
     <view class="form-item">
-      <view class="form-label">描述</view>
-      <textarea class="form-textarea" placeholder="请输入描述内容（可选）" value="{{desc}}" bindinput="onDescInput" auto-height maxlength="-1" />
+      <view class="form-label">
+        <text>描述</text>
+        <view class="desc-format-toggle" bindtap="onToggleDescFormat">
+          <text class="fmt-opt {{descFormat === 'plain' ? 'active' : ''}}">纯文本</text>
+          <text class="fmt-opt {{descFormat === 'markdown' ? 'active' : ''}}">Markdown</text>
+        </view>
+      </view>
+
+      <!-- 编辑态 -->
+      <block wx:if="{{descFormat === 'plain' || !descPreviewing}}">
+        <textarea
+          class="form-textarea {{descFormat === 'markdown' ? 'md-textarea' : ''}}"
+          placeholder="{{descFormat === 'markdown' ? '支持 # 标题、**粗体**、*斜体*、`代码`、列表、引用...' : '请输入描述内容（可选）'}}"
+          value="{{desc}}"
+          bindinput="onDescInput"
+          auto-height maxlength="-1"
+        />
+      </block>
+
+      <!-- Markdown 预览态 -->
+      <block wx:if="{{descFormat === 'markdown' && descPreviewing}}">
+        <view class="md-preview-box">
+          <rich-text wx:if="{{descHtml}}" nodes="{{descHtml}}" class="md-preview-content"></rich-text>
+          <text wx:else class="md-preview-empty-tip">（内容为空）</text>
+        </view>
+      </block>
+
+      <!-- 预览 / 编辑切换按钮（仅 markdown 模式） -->
+      <view class="preview-toggle-row" wx:if="{{descFormat === 'markdown'}}">
+        <text class="preview-toggle-btn" bindtap="onToggleDescPreview">
+          {{descPreviewing ? '✎ 返回编辑' : '◉ 预览效果'}}
+        </text>
+      </view>
     </view>
 
     <!-- 代码块 -->
@@ -20,29 +51,12 @@
         <view class="code-block-item">
           <view class="code-block-header">
             <scroll-view class="lang-select" scroll-x enhanced show-scrollbar="{{false}}">
-              <view
-                class="lang-option {{item.language === lang ? 'active' : ''}}"
-                wx:for="{{languages}}"
-                wx:key="*this"
-                wx:for-item="lang"
-                wx:for-index="langIdx"
-                bindtap="onCodeLangChange"
-                data-index="{{index}}"
-                data-lang="{{lang}}"
-              >{{lang}}</view>
+              <view class="lang-option {{item.language === lang ? 'active' : ''}}" wx:for="{{languages}}" wx:key="*this" wx:for-item="lang" bindtap="onCodeLangChange" data-index="{{index}}" data-lang="{{lang}}">{{lang}}</view>
             </scroll-view>
             <text class="code-fullscreen-btn" bindtap="onFullscreenCodeBlock" data-index="{{index}}">⛶ 全屏</text>
             <text class="code-remove-btn" bindtap="onRemoveCodeBlock" data-index="{{index}}">✕ 删除</text>
           </view>
-          <textarea
-            class="code-textarea"
-            placeholder="在此粘贴代码..."
-            value="{{item.content}}"
-            bindinput="onCodeContentInput"
-            data-index="{{index}}"
-            auto-height
-            maxlength="-1"
-          />
+          <textarea class="code-textarea" placeholder="在此粘贴代码..." value="{{item.content}}" bindinput="onCodeContentInput" data-index="{{index}}" auto-height maxlength="-1" />
         </view>
       </block>
       <view class="code-add-btn" bindtap="onAddCodeBlock">+ 添加代码块</view>
@@ -52,18 +66,11 @@
     <view class="form-item">
       <view class="form-label">标签 <text class="required">*</text></view>
       <view class="tag-select">
-        <view
-          class="tag-option {{item.selected ? 'selected' : ''}}"
-          wx:for="{{tags}}"
-          wx:key="_id"
-          bindtap="onToggleTag"
-          data-id="{{item._id}}"
-        >{{item.name}}</view>
+        <view class="tag-option {{item.selected ? 'selected' : ''}}" wx:for="{{tags}}" wx:key="_id" bindtap="onToggleTag" data-id="{{item._id}}">{{item.name}}</view>
         <view class="tag-option tag-add-btn" bindtap="onQuickAddTag">+ 新建标签</view>
       </view>
     </view>
 
-    <!-- 提交按钮 -->
     <button class="submit-btn" bindtap="onSubmit" hover-class="submit-btn-hover">提 交 记 录</button>
   </view>
 </view>
