@@ -2,9 +2,12 @@
   "pages": [
     "pages/index/index",
     "pages/add/add",
+    "pages/reflect/reflect",
     "pages/tags/tags",
     "pages/detail/detail",
-    "pages/code-editor/code-editor"
+    "pages/code-editor/code-editor",
+    "pages/rich-edit/rich-edit",
+    "pages/rich-viewer/rich-viewer"
   ],
   "window": {
     "backgroundColor": "#F5F7FA",
@@ -30,6 +33,12 @@
         "text": "添加",
         "iconPath": "images/icons/goods.png",
         "selectedIconPath": "images/icons/goods-active.png"
+      },
+      {
+        "pagePath": "pages/reflect/reflect",
+        "text": "反思",
+        "iconPath": "images/icons/examples.png",
+        "selectedIconPath": "images/icons/examples-active.png"
       },
       {
         "pagePath": "pages/tags/tags",

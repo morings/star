@@ -1,0 +1,220 @@
+<!--pages/reflect/reflect.wxml-->
+<view class="page">
+
+  <!-- ========== 日期导航 ========== -->
+  <view class="date-nav">
+    <text class="nav-arrow" bindtap="onPrev">‹</text>
+    <picker mode="date" value="{{displayDate}}" bindchange="onDateChange">
+      <text class="nav-date">{{displayDate}}</text>
+    </picker>
+    <text class="nav-arrow {{displayDate === todayStr ? 'disabled' : ''}}" bindtap="onNext">›</text>
+  </view>
+  <view class="nav-actions">
+    <text class="today-link" bindtap="onToday">回到今天</text>
+  </view>
+
+  <!-- ========== 查看模式 ========== -->
+  <block wx:if="{{mode === 'view'}}">
+
+    <!-- 有记录：展示详情 -->
+    <block wx:if="{{record}}">
+      <view class="detail-card">
+
+        <!-- 早起 -->
+        <view class="detail-row-item {{record.wake.done ? 'done' : 'undone'}}">
+          <view class="dr-header">
+            <text class="dr-emoji">🌅</text>
+            <text class="dr-name">早起</text>
+            <text class="dr-badge {{record.wake.done ? 'ok' : 'no'}}">{{record.wake.done ? '已完成' : '未完成'}}</text>
+          </view>
+          <block wx:if="{{record.wake.done}}">
+            <text class="dr-time" wx:if="{{record.wake.time}}">⏰ 起床时间：{{record.wake.time}}</text>
+            <text class="dr-note" wx:if="{{record.wake.note}}">{{record.wake.note}}</text>
+          </block>
+        </view>
+
+        <!-- 冥想 -->
+        <view class="detail-row-item {{record.meditate.done ? 'done' : 'undone'}}">
+          <view class="dr-header">
+            <text class="dr-emoji">🧘</text>
+            <text class="dr-name">冥想</text>
+            <text class="dr-badge {{record.meditate.done ? 'ok' : 'no'}}">{{record.meditate.done ? '已完成' : '未完成'}}</text>
+          </view>
+          <block wx:if="{{record.meditate.done}}">
+            <text class="dr-time" wx:if="{{record.meditate.minutes}}">⏱ 时长：{{record.meditate.minutes}} 分钟</text>
+            <text class="dr-note" wx:if="{{record.meditate.note}}">{{record.meditate.note}}</text>
+          </block>
+        </view>
+
+        <!-- 读书 -->
+        <view class="detail-row-item {{record.read.done ? 'done' : 'undone'}}">
+          <view class="dr-header">
+            <text class="dr-emoji">📖</text>
+            <text class="dr-name">读书</text>
+            <text class="dr-badge {{record.read.done ? 'ok' : 'no'}}">{{record.read.done ? '已完成' : '未完成'}}</text>
+          </view>
+          <block wx:if="{{record.read.done}}">
+            <text class="dr-time" wx:if="{{record.read.minutes}}">⏱ 时长：{{record.read.minutes}} 分钟</text>
+            <text class="dr-note" wx:if="{{record.read.book}}">📚 《{{record.read.book}}》</text>
+            <text class="dr-note" wx:if="{{record.read.note}}">{{record.read.note}}</text>
+          </block>
+        </view>
+
+        <!-- 写作 -->
+        <view class="detail-row-item {{record.write.done ? 'done' : 'undone'}}">
+          <view class="dr-header">
+            <text class="dr-emoji">✍️</text>
+            <text class="dr-name">写作</text>
+            <text class="dr-badge {{record.write.done ? 'ok' : 'no'}}">{{record.write.done ? '已完成' : '未完成'}}</text>
+          </view>
+          <block wx:if="{{record.write.done}}">
+            <text class="dr-time" wx:if="{{record.write.words}}">📝 字数：{{record.write.words}} 字</text>
+            <text class="dr-note" wx:if="{{record.write.topic}}">主题：{{record.write.topic}}</text>
+            <text class="dr-note" wx:if="{{record.write.note}}">{{record.write.note}}</text>
+          </block>
+        </view>
+
+        <!-- 健身 -->
+        <view class="detail-row-item {{record.exercise.done ? 'done' : 'undone'}}">
+          <view class="dr-header">
+            <text class="dr-emoji">💪</text>
+            <text class="dr-name">健身</text>
+            <text class="dr-badge {{record.exercise.done ? 'ok' : 'no'}}">{{record.exercise.done ? '已完成' : '未完成'}}</text>
+          </view>
+          <block wx:if="{{record.exercise.done}}">
+            <text class="dr-time" wx:if="{{record.exercise.minutes}}">⏱ 时长：{{record.exercise.minutes}} 分钟</text>
+            <text class="dr-note" wx:if="{{record.exercise.type}}">🏃 类型：{{record.exercise.type}}</text>
+            <text class="dr-note" wx:if="{{record.exercise.note}}">{{record.exercise.note}}</text>
+          </block>
+        </view>
+
+        <!-- 反思心得 -->
+        <view class="reflection-box" wx:if="{{record.reflection}}">
+          <text class="reflection-title">📝 今日心得与反思</text>
+          <text class="reflection-text">{{record.reflection}}</text>
+        </view>
+
+        <view class="detail-actions">
+          <button class="d-btn edit-d-btn" bindtap="onEditRecord">✎ 编辑</button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 无记录：提示创建 -->
+    <block wx:else>
+      <view class="empty-card">
+        <text class="empty-emoji">📆</text>
+        <text class="empty-title">{{displayDate}}</text>
+        <text class="empty-desc">还没有这一天的反思记录</text>
+        <button class="create-btn" bindtap="onNewRecord">+ 写反思</button>
+      </view>
+    </block>
+  </block>
+
+  <!-- ========== 编辑模式 ========== -->
+  <block wx:if="{{mode === 'edit'}}">
+    <view class="edit-card">
+      <view class="edit-date-row">
+        <text class="edit-date-label">日期</text>
+        <text class="edit-date-val">{{editingDate}}</text>
+      </view>
+
+      <!-- 早起 -->
+      <view class="habit-form">
+        <view class="habit-header" bindtap="onToggleHabit" data-key="wake">
+          <text class="habit-emoji">🌅</text>
+          <text class="habit-title">早起</text>
+          <view class="habit-switch {{form.wake.done ? 'on' : ''}}"><view class="switch-dot"></view></view>
+        </view>
+        <view class="habit-detail" wx:if="{{form.wake.done}}">
+          <view class="detail-row">
+            <text class="detail-label">起床时间</text>
+            <picker mode="time" value="{{form.wake.time}}" bindchange="onWakeTimeChange">
+              <view class="detail-value">{{form.wake.time || '选择时间'}}</view>
+            </picker>
+          </view>
+          <input class="detail-input" placeholder="备注" value="{{form.wake.note}}" bindinput="onHabitNote" data-key="wake" maxlength="100" />
+        </view>
+      </view>
+
+      <!-- 冥想 -->
+      <view class="habit-form">
+        <view class="habit-header" bindtap="onToggleHabit" data-key="meditate">
+          <text class="habit-emoji">🧘</text>
+          <text class="habit-title">冥想</text>
+          <view class="habit-switch {{form.meditate.done ? 'on' : ''}}"><view class="switch-dot"></view></view>
+        </view>
+        <view class="habit-detail" wx:if="{{form.meditate.done}}">
+          <view class="detail-row">
+            <text class="detail-label">时长（分钟）</text>
+            <input class="detail-number" type="number" placeholder="15" value="{{form.meditate.minutes ? form.meditate.minutes : ''}}" bindinput="onHabitNumber" data-key="meditate" data-field="minutes" />
+          </view>
+          <input class="detail-input" placeholder="备注" value="{{form.meditate.note}}" bindinput="onHabitNote" data-key="meditate" maxlength="100" />
+        </view>
+      </view>
+
+      <!-- 读书 -->
+      <view class="habit-form">
+        <view class="habit-header" bindtap="onToggleHabit" data-key="read">
+          <text class="habit-emoji">📖</text>
+          <text class="habit-title">读书</text>
+          <view class="habit-switch {{form.read.done ? 'on' : ''}}"><view class="switch-dot"></view></view>
+        </view>
+        <view class="habit-detail" wx:if="{{form.read.done}}">
+          <view class="detail-row">
+            <text class="detail-label">时长（分钟）</text>
+            <input class="detail-number" type="number" placeholder="30" value="{{form.read.minutes ? form.read.minutes : ''}}" bindinput="onHabitNumber" data-key="read" data-field="minutes" />
+          </view>
+          <input class="detail-input" placeholder="书名" value="{{form.read.book}}" bindinput="onHabitNote" data-key="read" data-sub="book" maxlength="50" />
+          <input class="detail-input" placeholder="笔记摘要" value="{{form.read.note}}" bindinput="onHabitNote" data-key="read" maxlength="200" />
+        </view>
+      </view>
+
+      <!-- 写作 -->
+      <view class="habit-form">
+        <view class="habit-header" bindtap="onToggleHabit" data-key="write">
+          <text class="habit-emoji">✍️</text>
+          <text class="habit-title">写作</text>
+          <view class="habit-switch {{form.write.done ? 'on' : ''}}"><view class="switch-dot"></view></view>
+        </view>
+        <view class="habit-detail" wx:if="{{form.write.done}}">
+          <view class="detail-row">
+            <text class="detail-label">字数</text>
+            <input class="detail-number" type="number" placeholder="500" value="{{form.write.words ? form.write.words : ''}}" bindinput="onHabitNumber" data-key="write" data-field="words" />
+          </view>
+          <input class="detail-input" placeholder="写作主题" value="{{form.write.topic}}" bindinput="onHabitNote" data-key="write" data-sub="topic" maxlength="50" />
+          <input class="detail-input" placeholder="备注" value="{{form.write.note}}" bindinput="onHabitNote" data-key="write" maxlength="100" />
+        </view>
+      </view>
+
+      <!-- 健身 -->
+      <view class="habit-form">
+        <view class="habit-header" bindtap="onToggleHabit" data-key="exercise">
+          <text class="habit-emoji">💪</text>
+          <text class="habit-title">健身</text>
+          <view class="habit-switch {{form.exercise.done ? 'on' : ''}}"><view class="switch-dot"></view></view>
+        </view>
+        <view class="habit-detail" wx:if="{{form.exercise.done}}">
+          <view class="detail-row">
+            <text class="detail-label">时长（分钟）</text>
+            <input class="detail-number" type="number" placeholder="30" value="{{form.exercise.minutes ? form.exercise.minutes : ''}}" bindinput="onHabitNumber" data-key="exercise" data-field="minutes" />
+          </view>
+          <input class="detail-input" placeholder="类型（跑步/力量/瑜伽等）" value="{{form.exercise.type}}" bindinput="onHabitNote" data-key="exercise" data-sub="type" maxlength="30" />
+          <input class="detail-input" placeholder="备注" value="{{form.exercise.note}}" bindinput="onHabitNote" data-key="exercise" maxlength="100" />
+        </view>
+      </view>
+
+      <!-- 心得反思 -->
+      <view class="reflection-area">
+        <text class="form-label">📝 今日心得与反思</text>
+        <textarea class="reflection-input" placeholder="记录今天的收获、感悟和反思..." value="{{form.reflection}}" bindinput="onReflectionInput" auto-height maxlength="500" />
+      </view>
+
+      <view class="form-actions">
+        <button class="form-btn save-btn" bindtap="onSave">✓ 保存</button>
+        <button class="form-btn cancel-btn" bindtap="onCancel">取消</button>
+      </view>
+    </view>
+  </block>
+
+</view>
