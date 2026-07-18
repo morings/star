@@ -88,6 +88,15 @@
           </block>
         </view>
 
+        <!-- 每日目标 -->
+        <view class="goals-view" wx:if="{{record.goals && record.goals.length > 0}}">
+          <text class="goals-title">🎯 每日目标</text>
+          <view class="goal-view-item {{item.done ? 'goal-done' : ''}}" wx:for="{{record.goals}}" wx:key="id">
+            <view class="goal-check {{item.done ? 'checked' : ''}}">{{item.done ? '✓' : ''}}</view>
+            <text class="goal-content {{item.done ? 'done-text' : ''}}">{{item.content}}</text>
+          </view>
+        </view>
+
         <!-- 反思心得 -->
         <view class="reflection-box" wx:if="{{record.reflection}}">
           <text class="reflection-title">📝 今日心得与反思</text>
@@ -201,6 +210,22 @@
           </view>
           <input class="detail-input" placeholder="类型（跑步/力量/瑜伽等）" value="{{form.exercise.type}}" bindinput="onHabitNote" data-key="exercise" data-sub="type" maxlength="30" />
           <input class="detail-input" placeholder="备注" value="{{form.exercise.note}}" bindinput="onHabitNote" data-key="exercise" maxlength="100" />
+        </view>
+      </view>
+
+      <!-- 每日目标 -->
+      <view class="goals-section">
+        <text class="form-label">🎯 每日目标</text>
+        <view class="goal-edit-item" wx:for="{{form.goals}}" wx:key="id" wx:for-index="idx">
+          <view class="goal-row">
+            <view class="goal-check-edit {{form.goals[idx].done ? 'checked' : ''}}" bindtap="onToggleGoal" data-index="{{idx}}">{{form.goals[idx].done ? '✓' : ''}}</view>
+            <input class="goal-input" placeholder="输入目标内容..." value="{{form.goals[idx].content}}" bindinput="onGoalInput" data-index="{{idx}}" maxlength="100" />
+            <text class="goal-del" bindtap="onRemoveGoal" data-index="{{idx}}">✕</text>
+          </view>
+        </view>
+        <view class="add-goal-btn" bindtap="onAddGoal">
+          <text class="add-goal-icon">+</text>
+          <text class="add-goal-text">添加目标</text>
         </view>
       </view>
 

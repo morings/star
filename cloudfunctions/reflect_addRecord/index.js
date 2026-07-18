@@ -3,7 +3,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
 exports.main = async (event, context) => {
-  const { date, wake, meditate, read, write, exercise, reflection } = event;
+  const { date, wake, meditate, read, write, exercise, reflection, goals } = event;
   if (!date) return { code: -1, msg: '日期不能为空' };
 
   try {
@@ -25,6 +25,7 @@ exports.main = async (event, context) => {
         write: write || { done: false, words: 0, topic: '', note: '' },
         exercise: exercise || { done: false, type: '', minutes: 0, note: '' },
         reflection: reflection || '',
+        goals: goals || [],
         createTime: db.serverDate(),
         updateTime: db.serverDate()
       }

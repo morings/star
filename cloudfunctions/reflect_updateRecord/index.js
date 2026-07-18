@@ -3,7 +3,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
 exports.main = async (event, context) => {
-  const { id, date, wake, meditate, read, write, exercise, reflection } = event;
+  const { id, date, wake, meditate, read, write, exercise, reflection, goals } = event;
   if (!id) return { code: -1, msg: '记录ID不能为空' };
 
   try {
@@ -26,6 +26,7 @@ exports.main = async (event, context) => {
     if (exercise !== undefined) updateData.exercise = exercise;
     if (write !== undefined) updateData.write = write;
     if (reflection !== undefined) updateData.reflection = reflection;
+    if (goals !== undefined) updateData.goals = goals;
     updateData.updateTime = db.serverDate();
 
     await db.collection('reflects').doc(id).update({ data: updateData });

@@ -27,6 +27,27 @@
 .reflection-title { font-size: 24rpx; color: #F9A825; font-weight: 600; display: block; margin-bottom: 10rpx; }
 .reflection-text { font-size: 28rpx; color: #555; line-height: 1.8; word-break: break-all; white-space: pre-wrap; }
 
+/* ========== 每日目标 - 查看模式 ========== */
+.goals-view { padding: 20rpx; background: #E8F5FE; border-radius: 12rpx; border-left: 5rpx solid #4A90D9; margin-top: 8rpx; }
+.goals-title { font-size: 24rpx; color: #4A90D9; font-weight: 600; display: block; margin-bottom: 14rpx; }
+.goal-view-item { display: flex; align-items: center; padding: 8rpx 0; }
+.goal-check { width: 36rpx; height: 36rpx; border-radius: 50%; border: 2rpx solid #CCC; margin-right: 14rpx; display: flex; align-items: center; justify-content: center; font-size: 22rpx; color: #fff; flex-shrink: 0; }
+.goal-check.checked { background: #4CAF50; border-color: #4CAF50; }
+.goal-content { font-size: 27rpx; color: #333; line-height: 1.6; }
+.goal-content.done-text { color: #AAA; text-decoration: line-through; }
+
+/* ========== 每日目标 - 编辑模式 ========== */
+.goals-section { margin-top: 20rpx; }
+.goal-edit-item { margin-bottom: 12rpx; }
+.goal-row { display: flex; align-items: center; background: #F5F7FA; border-radius: 10rpx; padding: 6rpx 12rpx; }
+.goal-check-edit { width: 40rpx; height: 40rpx; border-radius: 50%; border: 2rpx solid #D0D0D0; margin-right: 12rpx; display: flex; align-items: center; justify-content: center; font-size: 24rpx; color: #fff; flex-shrink: 0; }
+.goal-check-edit.checked { background: #4CAF50; border-color: #4CAF50; }
+.goal-input { flex: 1; height: 64rpx; font-size: 27rpx; color: #333; }
+.goal-del { width: 44rpx; height: 44rpx; line-height: 44rpx; text-align: center; font-size: 28rpx; color: #CCC; flex-shrink: 0; }
+.add-goal-btn { display: flex; align-items: center; justify-content: center; padding: 13rpx 0; border: 2rpx dashed #D0D0D0; border-radius: 10rpx; margin-top: 8rpx; }
+.add-goal-icon { font-size: 32rpx; color: #4A90D9; font-weight: 300; margin-right: 8rpx; }
+.add-goal-text { font-size: 26rpx; color: #4A90D9; }
+
 .detail-actions { margin-top: 24rpx; display: flex; justify-content: flex-end; }
 .d-btn { height: 68rpx; line-height: 68rpx; padding: 0 40rpx; font-size: 26rpx; border-radius: 14rpx; border: none; font-weight: 500; }
 .d-btn::after { border: none; }

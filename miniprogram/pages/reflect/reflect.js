@@ -1,4 +1,6 @@
 // pages/reflect/reflect.js
+let goalIdSeed = 0;
+
 Page({
   data: {
     mode: 'view',       // 'view' | 'edit'
@@ -11,7 +13,8 @@ Page({
       read: { done: false, minutes: 0, book: '', note: '' },
       write: { done: false, words: 0, topic: '', note: '' },
       exercise: { done: false, type: '', minutes: 0, note: '' },
-      reflection: ''
+      reflection: '',
+      goals: []
     }
   },
 
@@ -77,6 +80,7 @@ Page({
   // ========== 新建 / 编辑 ==========
   onNewRecord() {
     const date = this.data.displayDate;
+    goalIdSeed = 0;
     this.setData({
       mode: 'edit',
       editingDate: date,
@@ -86,7 +90,8 @@ Page({
         read: { done: false, minutes: 0, book: '', note: '' },
         write: { done: false, words: 0, topic: '', note: '' },
         exercise: { done: false, type: '', minutes: 0, note: '' },
-        reflection: ''
+        reflection: '',
+        goals: []
       }
     });
   },
@@ -94,6 +99,7 @@ Page({
   onEditRecord() {
     const r = this.data.record;
     if (!r) return;
+    goalIdSeed = 0;
     this.setData({
       mode: 'edit',
       editingDate: r.date,
@@ -103,7 +109,8 @@ Page({
         read: { done: (r.read && r.read.done) || false, minutes: (r.read && r.read.minutes) || 0, book: (r.read && r.read.book) || '', note: (r.read && r.read.note) || '' },
         write: { done: (r.write && r.write.done) || false, words: (r.write && r.write.words) || 0, topic: (r.write && r.write.topic) || '', note: (r.write && r.write.note) || '' },
         exercise: { done: (r.exercise && r.exercise.done) || false, type: (r.exercise && r.exercise.type) || '', minutes: (r.exercise && r.exercise.minutes) || 0, note: (r.exercise && r.exercise.note) || '' },
-        reflection: r.reflection || ''
+        reflection: r.reflection || '',
+        goals: (r.goals || []).map(g => ({ ...g }))
       }
     });
   },
@@ -131,6 +138,29 @@ Page({
 
   onReflectionInput(e) {
     this.setData({ 'form.reflection': e.detail.value });
+  },
+
+  // ========== 每日目标操作 ==========
+  onGoalInput(e) {
+    const idx = e.currentTarget.dataset.index;
+    this.setData({ [`form.goals[${idx}].content`]: e.detail.value });
+  },
+
+  onAddGoal() {
+    goalIdSeed++;
+    const newGoal = { id: `g_${Date.now()}_${goalIdSeed}`, content: '', done: false };
+    this.setData({ 'form.goals': [...this.data.form.goals, newGoal] });
+  },
+
+  onRemoveGoal(e) {
+    const idx = e.currentTarget.dataset.index;
+    const goals = this.data.form.goals.filter((_, i) => i !== idx);
+    this.setData({ 'form.goals': goals });
+  },
+
+  onToggleGoal(e) {
+    const idx = e.currentTarget.dataset.index;
+    this.setData({ [`form.goals[${idx}].done`]: !this.data.form.goals[idx].done });
   },
 
   onCancel() {
