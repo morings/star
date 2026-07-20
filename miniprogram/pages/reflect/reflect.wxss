@@ -1,5 +1,5 @@
 /* pages/reflect/reflect.wxss */
-.page { min-height: 100vh; background: #F5F7FA; padding-bottom: 40rpx; }
+.page { background: #F5F7FA; padding-bottom: 40rpx; }
 
 /* ========== 日期导航 ========== */
 .date-nav { display: flex; align-items: center; justify-content: center; padding: 28rpx 24rpx 12rpx; background: #fff; }
@@ -28,7 +28,7 @@
 .reflection-text { font-size: 28rpx; color: #555; line-height: 1.8; word-break: break-all; white-space: pre-wrap; }
 
 /* ========== 每日目标 - 查看模式 ========== */
-.goals-view { padding: 20rpx; background: #E8F5FE; border-radius: 12rpx; border-left: 5rpx solid #4A90D9; margin-top: 8rpx; }
+.goals-view { padding: 20rpx; background: #E8F5FE; border-radius: 12rpx; margin-top: 8rpx; }
 .goals-title { font-size: 24rpx; color: #4A90D9; font-weight: 600; display: block; margin-bottom: 14rpx; }
 .goal-view-item { display: flex; align-items: center; padding: 8rpx 0; }
 .goal-check { width: 36rpx; height: 36rpx; border-radius: 50%; border: 2rpx solid #CCC; margin-right: 14rpx; display: flex; align-items: center; justify-content: center; font-size: 22rpx; color: #fff; flex-shrink: 0; }

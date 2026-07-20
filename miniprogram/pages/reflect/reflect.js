@@ -167,6 +167,42 @@ Page({
     this.setData({ mode: 'view' });
   },
 
+  // ========== 查看模式快速切换 ==========
+  // 切换五个习惯完成状态
+  onQuickToggle(e) {
+    const key = e.currentTarget.dataset.key;
+    const record = this.data.record;
+    if (!record) return;
+
+    const done = !(record[key] && record[key].done);
+    const update = {};
+    update[key] = { ...(record[key] || {}), done };
+
+    this.setData({ [`record.${key}.done`]: done });
+
+    wx.cloud.callFunction({
+      name: 'reflect_updateRecord',
+      data: { id: record._id, ...update }
+    });
+  },
+
+  // 切换每日目标完成状态
+  onToggleGoalView(e) {
+    const idx = e.currentTarget.dataset.index;
+    const record = this.data.record;
+    if (!record || !record.goals) return;
+
+    const goals = [...record.goals];
+    goals[idx] = { ...goals[idx], done: !goals[idx].done };
+
+    this.setData({ 'record.goals': goals });
+
+    wx.cloud.callFunction({
+      name: 'reflect_updateRecord',
+      data: { id: record._id, goals }
+    });
+  },
+
   // 保存
   onSave() {
     const { form, record } = this.data;
